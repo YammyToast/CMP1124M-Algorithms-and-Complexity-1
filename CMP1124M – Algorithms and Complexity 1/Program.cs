@@ -27,10 +27,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 if (dataObjects.Count != dataFileNames.Count) {
                     throw new Exception($"{dataObjects.Count}/{dataFileNames.Count}");
                 }
-                Console.WriteLine(dataObjects.Count);
+                
             }
             catch (Exception ex) {
                 Console.WriteLine($"Could not create all data collections: {ex}");
+            }
+
+            foreach (DataCollection dataCollection in dataObjects) {
+                DateTime startTime = DateTime.Now;
+
+                dataCollection.Sort((int) Directions.Ascending );
+
+                DateTime endTime = DateTime.Now;
+                TimeSpan ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+                Console.WriteLine($" Time Taken: > {ticksTaken.TotalMilliseconds}ms  |  Data Count: {dataCollection.getCount}");
             }
         }
 
@@ -47,7 +57,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 
                 foreach (string s in data) {
                     int num;
-                    if (int.TryParse(s, out num) == true)
+                    if (int.TryParse(s, out num))
                     {
                         dataList.Add(num);
                         lineNumber++;
@@ -65,14 +75,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
             catch (ArrayTypeMismatchException ex)
             {
-                Console.Write($"Nonconvertible data: {ex.Message} ");
-                //Console.Write($"({fileName} Line: {lineNumber})");
+                Console.WriteLine($"Nonconvertible data: {ex.Message.Split("\r")[0]} ({fileName} Line: {lineNumber}) ");
                 Console.ReadKey();
                 Environment.Exit(1);
             }
-
+            
 
             return dataList;
         }
+
+        public enum Directions
+        {
+            Ascending,
+            Descending
+        }
+
     }
 }
