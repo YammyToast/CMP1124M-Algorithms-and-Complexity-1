@@ -32,7 +32,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             catch (Exception ex) {
                 Console.WriteLine($"Could not create all data collections: {ex}");
             }
-
+            int searchValue = 50;
             foreach (DataCollection dataCollection in dataObjects) {
                 foreach(int enumVal in Enum.GetValues(typeof(Directions)))
                 {
@@ -42,11 +42,16 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
                     DateTime endTime = DateTime.Now;
                     TimeSpan ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+
                     Console.WriteLine($"\n ─────────┤ Filename: {dataCollection.fileName} | Time Taken: > {ticksTaken.TotalMilliseconds}ms  |  Data Count: {dataCollection.getCount()} | Direction: {(Directions) enumVal} ├───────── \n");
+                    
                     foreach (int interval in dataCollection.GetIntervals()) {
                         Console.Write($" {interval} |");
                     }
-                    Console.WriteLine($"\n");
+
+
+                    (int Number, int Count, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount(), searchValue, enumVal);
+                    Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.Count}");
 
                 }
                 
