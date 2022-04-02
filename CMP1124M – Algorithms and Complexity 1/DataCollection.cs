@@ -12,14 +12,16 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         private List<int> data;
         private int dataCount;
         private int dataInterval;
+        public readonly string fileName;
 
         public int getCount() {
             return dataCount;
         }
 
-        public DataCollection(List<int> _data) { 
+        public DataCollection(List<int> _data, string _fileName) { 
             data = _data;
             dataCount = _data.Count;
+            fileName = _fileName;
             switch (dataCount)
             {
                 case (256):
@@ -31,22 +33,28 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
         }
         
+        /// <summary>
+        /// Sorts data in the data-collection into the given direction.
+        /// </summary>
+        /// <param name="direction">0: Ascending, 1: Descending</param>
         public void Sort(int direction) {
             List<int> sortedList = new List<int>();
             switch (dataCount) {
                 case (256):
-                    sortedList = MergeSort(data);
+                    sortedList = MergeSort(data, direction);
                     break;
                 case (2048):
-                    sortedList = MergeSort(data);
+                    sortedList = MergeSort(data, direction);
                     break;
                 default:
                     Console.WriteLine("Default");
                     break;
             }
+            data = sortedList;
         }
 
-        private List<int> MergeSort(List<int> list)
+
+        private List<int> MergeSort(List<int> list, int direction)
         {
             
             if (list.Count <= 1)
@@ -62,10 +70,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 // Right array can use midpoint as we know there's an even number of elements.
                 List<int> rightArray = list.GetRange(midPoint, midPoint);
 
-                List<int> sortedLeft = MergeSort(leftArray);
-                List<int> sortedRight = MergeSort(rightArray);
+                List<int> sortedLeft = MergeSort(leftArray, direction);
+                List<int> sortedRight = MergeSort(rightArray, direction);
 
-                List<int> result = MergeLists(sortedLeft, sortedRight);
+                List<int> result = MergeLists(sortedLeft, sortedRight, direction);
                 return result;
 
 
@@ -77,14 +85,14 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return list;
         }
 
-        private List<int> MergeLists(List<int> left, List<int> right) {
+        private List<int> MergeLists(List<int> left, List<int> right, int direction) {
             int leftCount = left.Count;
             int rightCount = right.Count;
             List<int> mergedList = new List<int>();
-
+            
             while (leftCount != 0 && rightCount != 0)
             {
-                if (left.First() <= right.First())
+                if ((left.First() * direction) >= (right.First() * direction))
                 {
                     mergedList.Add(right.First());
                     right.RemoveAt(0);
@@ -104,6 +112,16 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
             return mergedList;
 
+        }
+
+        public List<int> GetIntervals() {
+            List<int> intervals = new List<int>();
+            int intervalIndex = 0;
+            while (intervalIndex < dataCount) {
+                intervals.Add(data.ElementAt(intervalIndex));
+                intervalIndex += dataInterval;
+            }
+            return intervals;
         }
     }
 }
