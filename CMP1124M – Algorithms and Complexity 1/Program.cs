@@ -7,7 +7,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     {
         static void Main(string[] args)
         {
-            List<string> dataFileNames = new List<string>() { 
+
+            List<string> dataFileNames = new List<string>() {
                 "Share_1_256", "Share_1_2048",
                 "Share_2_256", "Share_2_2048",
                 "Share_3_256", "Share_3_2048"
@@ -20,27 +21,42 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 foreach (string file in dataFileNames)
                 {
                     List<int> dataList = ReadData(file);
-                    DataCollection dataCollection = new DataCollection(dataList);
+                    DataCollection dataCollection = new DataCollection(dataList, file);
                     dataObjects.Add(dataCollection);
 
                 }
                 if (dataObjects.Count != dataFileNames.Count) {
                     throw new Exception($"{dataObjects.Count}/{dataFileNames.Count}");
                 }
-                
+
             }
             catch (Exception ex) {
                 Console.WriteLine($"Could not create all data collections: {ex}");
             }
-
+            int searchValue = 50;
             foreach (DataCollection dataCollection in dataObjects) {
-                DateTime startTime = DateTime.Now;
+                foreach(int enumVal in Enum.GetValues(typeof(Directions)))
+                {
+                    DateTime startTime = DateTime.Now;
 
-                dataCollection.Sort((int) Directions.Ascending );
+                    dataCollection.Sort(enumVal);
 
-                DateTime endTime = DateTime.Now;
-                TimeSpan ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
-                Console.WriteLine($" Time Taken: > {ticksTaken.TotalMilliseconds}ms  |  Data Count: {dataCollection.getCount}");
+                    DateTime endTime = DateTime.Now;
+                    TimeSpan ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+
+                    Console.WriteLine($"\n ─────────┤ Filename: {dataCollection.fileName} | Time Taken: > {ticksTaken.TotalMilliseconds}ms  |  Data Count: {dataCollection.getCount()} | Direction: {(Directions) enumVal} ├───────── \n");
+                    
+                    foreach (int interval in dataCollection.GetIntervals()) {
+                        Console.Write($" {interval} |");
+                        
+                    }
+                    Console.WriteLine();
+
+                    (int Number, int Count, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
+                    Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.Count}");
+
+                }
+                
             }
         }
 
@@ -86,8 +102,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         public enum Directions
         {
-            Ascending,
-            Descending
+            Descending = -1,
+            Ascending = 1,
         }
 
     }
