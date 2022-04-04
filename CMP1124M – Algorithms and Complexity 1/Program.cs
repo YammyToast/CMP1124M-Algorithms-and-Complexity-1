@@ -7,6 +7,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     {
         static void Main(string[] args)
         {
+
             List<string> dataFileNames = new List<string>() {
                 "Share_1_256", "Share_1_2048",
                 "Share_2_256", "Share_2_2048",
@@ -47,10 +48,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     
                     foreach (int interval in dataCollection.GetIntervals()) {
                         Console.Write($" {interval} |");
+                        
                     }
+                    Console.WriteLine();
 
-
-                    (int Number, int Count, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount(), searchValue, enumVal);
+                    (int Number, int Count, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
                     Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.Count}");
 
                 }

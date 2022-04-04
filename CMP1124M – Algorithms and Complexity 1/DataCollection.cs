@@ -10,8 +10,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     {
 
         private List<int> data;
-        private int dataCount;
-        private int dataInterval;
+        private readonly int dataCount;
+        private readonly int dataInterval;
         public readonly string fileName;
 
         public DataCollection(List<int> _data, string _fileName) { 
@@ -148,53 +148,68 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             
             int midPoint = (lowerBoundary + upperBoundary) / 2;
             int midPointValue = data.ElementAt(midPoint);
-
-            Console.WriteLine($"UpperBound: {upperBoundary}, LowerBound: {lowerBoundary}, midPoint: {midPoint}, midPointValue: {midPointValue}");
             
-            if (lowerBoundary >= (upperBoundary - 1)) {
-                if (lowerBoundary == 0) {
-                    return BinaryRange(data.First(), 1);
-                }
-                if (upperBoundary == data.Count) {
-                    return BinaryRange(data.Last(), data.Count-1);
-                }
-                if ((midPointValue - data.ElementAt(midPoint - 1) * direction) > ((data.ElementAt(midPoint + 1) - midPoint) * direction))
-                {
-                    return BinaryRange(data.ElementAt(midPoint + 1), midPoint + 1);
-                }
-                else {
-                    return BinaryRange(data.ElementAt(midPoint - 1), midPoint - 1);
-                }
-            }
 
-            if (midPointValue == searchValue)
-            {
+            if (searchValue == midPointValue) {
+
                 return BinaryRange(searchValue, midPoint);
             }
-            else {
-                if ((midPointValue * direction) > (searchValue * direction))
+
+            if (upperBoundary - 1 == lowerBoundary) {
+                int closestLower = Math.Abs((midPointValue * direction) - data.ElementAt(lowerBoundary));
+                int closestUpper = Math.Abs((midPointValue * direction) - data.ElementAt(upperBoundary));
+                
+                if (closestLower <= closestUpper)
                 {
-                    return BinarySearch(lowerBoundary, midPoint - 1, searchValue, direction);
+                    return BinaryRange(data.ElementAt(lowerBoundary), lowerBoundary);
                 }
                 else { 
-                    return BinarySearch(midPoint + 1, upperBoundary, searchValue, direction);
+                    return BinaryRange(data.ElementAt(upperBoundary), upperBoundary);
                 }
+
+            }
+
+            if ((searchValue * direction) > (midPointValue * direction)) {
+                return BinarySearch(midPoint, upperBoundary, searchValue, direction);
+            }
+            else {
+                return BinarySearch(lowerBoundary, midPoint, searchValue, direction);
             }
 
         }
 
         private (int Number, int Count, int[] indexes) BinaryRange(int searchValue, int index) {
-            int lowerIndex = index;
-            int upperIndex = index;
-            while (data.ElementAt(lowerIndex) == searchValue && lowerIndex > 0){
-                lowerIndex--;
-            };
-            while (data.ElementAt(upperIndex) == searchValue && upperIndex < data.Count - 1) {
-                upperIndex++;
+            Console.WriteLine($"Searching for: {searchValue}, at index: {index}");
+
+            int count = 1;
+            int upperSearchBoundary = index + 1, lowerSearchBoundary = index - 1;
+
+            try
+            {
+
+                while (data.ElementAt(upperSearchBoundary) == searchValue && upperSearchBoundary < data.Count())
+                {
+                    upperSearchBoundary++; count++;
+                }
+                while (data.ElementAt(lowerSearchBoundary) == searchValue && lowerSearchBoundary > 0)
+                {
+                    lowerSearchBoundary--; count++;
+                }
+            }
+            catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+ 
+            IEnumerable<int> indexes = Enumerable.Range(lowerSearchBoundary, upperSearchBoundary - lowerSearchBoundary);
+            foreach (int indexer in indexes) {
+                Console.WriteLine($"> {indexer}  ");
             }
 
-            return (searchValue, (upperIndex - lowerIndex) - 1, Enumerable.Range(lowerIndex, upperIndex - lowerIndex).ToArray());
-            
+            Console.WriteLine($"U: {upperSearchBoundary}, L: {lowerSearchBoundary}, C: {count}");
+
+
+
+            return (searchValue, count, Enumerable.Range(lowerSearchBoundary, upperSearchBoundary - Math.Abs(lowerSearchBoundary)).ToArray());
         }
     }
 }
