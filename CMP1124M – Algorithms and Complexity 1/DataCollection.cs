@@ -143,12 +143,21 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return mergedList;
 
         }
-
-        public (int Number, int Count, int[] indexes) BinarySearch(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
+        /// <summary>
+        /// Performs a binary search on the ordered list, given the direction the list is sorted in.
+        /// Recursive Algorithm.
+        /// </summary>
+        /// <param name="lowerBoundary">The lower boundary of the search space.</param>
+        /// <param name="upperBoundary">The upper boundary of the search space.</param>
+        /// <param name="searchValue">The value to search the list for.</param>
+        /// <param name="direction">The direction in which the list is sorted.
+        /// Ascending, Descending.
+        /// </param>
+        /// <returns>Tuple of the number searched for, and the indexes at which it is found.</returns>
+        public (int Number, int[] indexes) BinarySearch(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
             
             int midPoint = (lowerBoundary + upperBoundary) / 2;
             int midPointValue = data.ElementAt(midPoint);
-            
 
             if (searchValue == midPointValue) {
 
@@ -158,7 +167,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             if (upperBoundary - 1 == lowerBoundary) {
                 int closestLower = Math.Abs((midPointValue * direction) - data.ElementAt(lowerBoundary));
                 int closestUpper = Math.Abs((midPointValue * direction) - data.ElementAt(upperBoundary));
-                
                 if (closestLower <= closestUpper)
                 {
                     return BinaryRange(data.ElementAt(lowerBoundary), lowerBoundary);
@@ -178,38 +186,50 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         }
 
-        private (int Number, int Count, int[] indexes) BinaryRange(int searchValue, int index) {
-            Console.WriteLine($"Searching for: {searchValue}, at index: {index}");
+        /// <summary>
+        /// Finds the count of neighbouring values surrounding the given index and value to search for in the list. 
+        /// Requires the list to be sorted.
+        /// </summary>
+        /// <param name="searchValue">Value to filter for.</param>
+        /// <param name="index">The start index to search around.</param>
+        /// <returns>Tuple of the number searched for, and the indexes at which it is found.</returns>
+        private (int Number, int[] indexes) BinaryRange(int searchValue, int index) {
+
 
             int count = 1;
             int upperSearchBoundary = index + 1, lowerSearchBoundary = index - 1;
-
+            
             try
             {
 
-                while (data.ElementAt(upperSearchBoundary) == searchValue && upperSearchBoundary < data.Count())
+                while (data.ElementAt(upperSearchBoundary) == searchValue && upperSearchBoundary < data.Count)
                 {
+
                     upperSearchBoundary++; count++;
+                    if (upperSearchBoundary == data.Count) {
+                        break;
+                    }
+
                 }
                 while (data.ElementAt(lowerSearchBoundary) == searchValue && lowerSearchBoundary > 0)
                 {
+
                     lowerSearchBoundary--; count++;
+                    if (lowerSearchBoundary < 0)
+                    {
+                        break;
+                    }
                 }
             }
-            catch(Exception ex) {
-                Console.WriteLine(ex.Message);
-            }
- 
-            IEnumerable<int> indexes = Enumerable.Range(lowerSearchBoundary, upperSearchBoundary - lowerSearchBoundary);
-            foreach (int indexer in indexes) {
-                Console.WriteLine($"> {indexer}  ");
+            catch (Exception ex)
+            {
+                
             }
 
-            Console.WriteLine($"U: {upperSearchBoundary}, L: {lowerSearchBoundary}, C: {count}");
+            // This works somehow, and I don't want to touch it.
 
-
-
-            return (searchValue, count, Enumerable.Range(lowerSearchBoundary, upperSearchBoundary - Math.Abs(lowerSearchBoundary)).ToArray());
+            return (searchValue, Enumerable.Range(lowerSearchBoundary + 1, count).ToArray());
         }
+
     }
 }

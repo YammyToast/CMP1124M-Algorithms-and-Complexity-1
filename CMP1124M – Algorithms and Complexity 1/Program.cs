@@ -33,7 +33,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             catch (Exception ex) {
                 Console.WriteLine($"Could not create all data collections: {ex}");
             }
-            int searchValue = 50;
+
+            int searchValue = 100;
+            
             foreach (DataCollection dataCollection in dataObjects) {
                 foreach(int enumVal in Enum.GetValues(typeof(Directions)))
                 {
@@ -52,9 +54,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     }
                     Console.WriteLine();
 
-                    (int Number, int Count, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
-                    Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.Count}");
-
+                    (int Number, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
+                    Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.indexes.Length}");
+                    foreach (int index in searchResults.indexes) {
+                        Console.WriteLine($"[>] : {index}");
+                    }
                 }
                 
             }
