@@ -39,22 +39,34 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             foreach (DataCollection dataCollection in dataObjects) {
                 foreach(int enumVal in Enum.GetValues(typeof(Directions)))
                 {
+                    TimeSpan totalTicks = TimeSpan.FromTicks(0);
+                    Output logger = new();
+
+
                     DateTime startTime = DateTime.Now;
 
                     dataCollection.Sort(enumVal);
 
                     DateTime endTime = DateTime.Now;
                     TimeSpan ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+                    totalTicks += ticksTaken;
+                    logger.WriteSortResults(dataCollection, ticksTaken);
 
-                    Console.WriteLine($"\n ─────────┤ Filename: {dataCollection.fileName} | Time Taken: > {ticksTaken.TotalMilliseconds}ms  |  Data Count: {dataCollection.getCount()} | Direction: {(Directions) enumVal} ├───────── \n");
-                    
-                    foreach (int interval in dataCollection.GetIntervals()) {
-                        Console.Write($" {interval} |");
-                        
-                    }
-                    Console.WriteLine();
+
+                    startTime = DateTime.Now;
+
+                    List<int> intervals = dataCollection.GetIntervals();
+
+                    endTime = DateTime.Now;
+                    ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+                    totalTicks += ticksTaken;
+                    logger.WriteIntervals(intervals, dataCollection.getInterval(), ticksTaken);
+
+                    startTime = DateTime.Now;
 
                     (int Number, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
+                    
+                    
                     Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.indexes.Length}");
                     foreach (int index in searchResults.indexes) {
                         Console.WriteLine($"[>] : {index}");
@@ -104,11 +116,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return dataList;
         }
 
+
+    }
         public enum Directions
         {
             Descending = -1,
             Ascending = 1,
         }
-
-    }
 }

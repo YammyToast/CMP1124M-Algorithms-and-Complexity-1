@@ -10,9 +10,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     {
 
         private List<int> data;
-        private readonly int dataCount;
-        private readonly int dataInterval;
+        private int dataCount;
+        private int dataInterval;
         public readonly string fileName;
+        public int sortDirection;
+        
 
         public DataCollection(List<int> _data, string _fileName) { 
             data = _data;
@@ -36,6 +38,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return dataCount;
         }
 
+        public int getInterval() {
+            return dataInterval;
+        }
+
         
         /// <summary>
         /// Finds all of the numbers at indexes separated by the interval.
@@ -56,6 +62,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// </summary>
         /// <param name="direction">1: Ascending, -1: Descending</param>
         public void Sort(int direction) {
+            sortDirection = direction;
             List<int> sortedList = new List<int>();
             switch (dataCount) {
                 case (256):
@@ -65,7 +72,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     sortedList = MergeSort(data, direction);
                     break;
                 default:
-                    Console.WriteLine("Default");
+                    Console.WriteLine("Unsupported data-length");
                     break;
             }
             data = sortedList;
