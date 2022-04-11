@@ -14,7 +14,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         private int dataInterval;
         public readonly string fileName;
         public int sortDirection;
-        private sortTypes sortUsed;
+        private SortTypes sortUsed;
         
 
         public DataCollection(List<int> _data, string _fileName) { 
@@ -43,7 +43,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return dataInterval;
         }
 
-        public sortTypes getSortUsed() {
+        public SortTypes getSortUsed() {
             return sortUsed;
         }
 
@@ -52,7 +52,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// Finds all of the numbers at indexes separated by the interval.
         /// </summary>
         /// <returns>A list of all of the numbers from the index.</returns>
-        public List<int> findIntervals() {
+        public List<int> FindIntervals() {
             List<int> intervals = new List<int>();
             int intervalIndex = 0;
             while (intervalIndex < dataCount) {
@@ -66,15 +66,15 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// Sorts data in the data-collection into the given direction.
         /// </summary>
         /// <param name="direction">1: Ascending, -1: Descending</param>
-        public void Sort(int direction) {
-            sortDirection = direction;
+        public void Sort(Directions direction) {
+            sortDirection = (int) direction;
             List<int> sortedList = new List<int>();
             switch (dataCount) {
                 case (256):
-                    sortedList = MergeSort(data, direction);
+                    sortedList = MergeSort(data, sortDirection);
                     break;
                 case (2048):
-                    sortedList = MergeSort(data, direction);
+                    sortedList = MergeSort(data, sortDirection);
                     break;
                 default:
                     Console.WriteLine("Unsupported data-length");
@@ -247,7 +247,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         }
 
     }
-    public enum sortTypes { 
-        MergeSort
+    public enum SortTypes { 
+        MergeSort = 1
     }
 }
