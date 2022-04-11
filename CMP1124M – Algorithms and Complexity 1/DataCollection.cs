@@ -14,6 +14,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         private int dataInterval;
         public readonly string fileName;
         public int sortDirection;
+        private sortTypes sortUsed;
         
 
         public DataCollection(List<int> _data, string _fileName) { 
@@ -42,12 +43,16 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return dataInterval;
         }
 
+        public sortTypes getSortUsed() {
+            return sortUsed;
+        }
+
         
         /// <summary>
         /// Finds all of the numbers at indexes separated by the interval.
         /// </summary>
         /// <returns>A list of all of the numbers from the index.</returns>
-        public List<int> GetIntervals() {
+        public List<int> findIntervals() {
             List<int> intervals = new List<int>();
             int intervalIndex = 0;
             while (intervalIndex < dataCount) {
@@ -150,6 +155,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return mergedList;
 
         }
+
+
+
         /// <summary>
         /// Performs a binary search on the ordered list, given the direction the list is sorted in.
         /// Recursive Algorithm.
@@ -168,7 +176,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
             if (searchValue == midPointValue) {
 
-                return BinaryRange(searchValue, midPoint);
+                return GetSortedRange(searchValue, midPoint);
             }
 
             if (upperBoundary - 1 == lowerBoundary) {
@@ -176,10 +184,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 int closestUpper = Math.Abs((midPointValue * direction) - data.ElementAt(upperBoundary));
                 if (closestLower <= closestUpper)
                 {
-                    return BinaryRange(data.ElementAt(lowerBoundary), lowerBoundary);
+                    return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
                 }
                 else { 
-                    return BinaryRange(data.ElementAt(upperBoundary), upperBoundary);
+                    return GetSortedRange(data.ElementAt(upperBoundary), upperBoundary);
                 }
 
             }
@@ -200,7 +208,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// <param name="searchValue">Value to filter for.</param>
         /// <param name="index">The start index to search around.</param>
         /// <returns>Tuple of the number searched for, and the indexes at which it is found.</returns>
-        private (int Number, int[] indexes) BinaryRange(int searchValue, int index) {
+        private (int Number, int[] indexes) GetSortedRange(int searchValue, int index) {
 
 
             int count = 1;
@@ -238,5 +246,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return (searchValue, Enumerable.Range(lowerSearchBoundary + 1, count).ToArray());
         }
 
+    }
+    public enum sortTypes { 
+        MergeSort
     }
 }

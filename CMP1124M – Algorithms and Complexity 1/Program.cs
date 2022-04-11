@@ -53,24 +53,24 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     logger.WriteSortResults(dataCollection, ticksTaken);
 
 
-                    startTime = DateTime.Now;
 
-                    List<int> intervals = dataCollection.GetIntervals();
 
-                    endTime = DateTime.Now;
-                    ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
-                    totalTicks += ticksTaken;
-                    logger.WriteIntervals(intervals, dataCollection.getInterval(), ticksTaken);
 
                     startTime = DateTime.Now;
 
                     (int Number, int[] indexes) searchResults = dataCollection.BinarySearch(0, dataCollection.getCount() - 1, searchValue, enumVal);
                     
-                    
-                    Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.indexes.Length}");
-                    foreach (int index in searchResults.indexes) {
-                        Console.WriteLine($"[>] : {index}");
-                    }
+                    endTime = DateTime.Now;
+                    ticksTaken = TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks);
+                    totalTicks += ticksTaken;
+                    logger.WriteSearchResults(searchResults, ticksTaken);
+
+                    List<int> intervals = dataCollection.findIntervals();
+                    logger.WriteIntervals(intervals, dataCollection.getInterval());
+                    //Console.WriteLine($"\nBinary Search Results: {searchResults.Number}, Found: {searchResults.indexes.Length}");
+                    //foreach (int index in searchResults.indexes) {
+                    //    Console.WriteLine($"[>] : {index}");
+                    //}
                 }
                 
             }
