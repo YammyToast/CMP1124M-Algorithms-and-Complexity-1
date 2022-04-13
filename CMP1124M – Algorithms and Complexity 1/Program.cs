@@ -17,6 +17,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             // Initialises a list to store all of the file-data.
             List<DataCollection> dataObjects = new List<DataCollection>();
 
+
+            int mergedFileCounter = 0;
+
             // Loads the file-data into the list using the preset file-names.
             try
             {
@@ -36,7 +39,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 Console.WriteLine($"Could not create all data collections: {ex}");
             }
 
-            int searchValue = 100;
+
 
             State state = State.UserInput;
             string stateInput = " ";
@@ -74,9 +77,55 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"{ex.Message}");
+                            Console.WriteLine($"{ex}");
                         }
+                        state = State.UserInput;
+
+
+                    } else if (state == State.MergeFile)
+                    {
+                        string leftFileName = string.Empty;
+                        string rightFileName = string.Empty;
+                        try 
+                        {
+                            while (!dataFileNames.Exists(x => x == leftFileName)) {
+                                Console.WriteLine($"| Loaded Files |");
+                                foreach (string file in dataFileNames)
+                                {
+                                    Console.WriteLine($" > {file}");
+                                }
+                                Console.WriteLine($"Choose the first file in the merge: \n\n");
+                                Console.Write(" : ");
+                                leftFileName = Console.ReadLine();
+                            }
+                            while (!dataFileNames.Exists(x => x == rightFileName))
+                            {
+                                Console.WriteLine($"| Loaded Files |");
+                                foreach (string file in dataFileNames)
+                                {
+                                    Console.WriteLine($" > {file}");
+                                }
+                                Console.WriteLine($"Choose the second file in the merge: \n\n");
+                                Console.Write(" : ");
+                                rightFileName = Console.ReadLine();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
+                        DataCollection mergedFile = MergeFiles(dataObjects.ElementAt(dataFileNames.IndexOf(leftFileName)),
+                                                                dataObjects.ElementAt(dataFileNames.IndexOf(rightFileName)));
+                        dataObjects.Add(mergedFile);
+                        string fileSuffix = (mergedFileCounter > 0) ? $"({mergedFileCounter})" : "";
+                        dataFileNames.Add($"{mergedFile.fileName}{fileSuffix}");
+                        mergedFileCounter++;
+                        state = State.UserInput;
                     }
+
+
+
+
                     else {
                         // Else, continue looping.
                         state = State.UserInput;
@@ -138,24 +187,108 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
 
         public static void AnalyseFile(DataCollection file) {
-            SortTypes defaultSort  = SortTypes.MergeSort;
-            Directions defaultDirection = Directions.Ascending;
-
+            SortTypes chosenSort  = SortTypes.MergeSort;
+            Directions chosenDirection = Directions.Ascending;
+            string sortInput = string.Empty;
+            string directionInput = string.Empty;
+            string searchString = string.Empty;
+            int searchValue = 0;
             
-            Console.WriteLine($"\n\n Analyse | {file.fileName} | {file.getCount()} \n\nAvailable Sorts: (Defaults: {defaultSort}, {defaultDirection})");
-            foreach (SortTypes sort in Enum.GetValues(typeof(SortTypes))) {
-                Console.Write($"| {sort} |");    
-            }
+            Console.WriteLine($"\n\n Analyse | {file.fileName} | {file.getCount()} \n\nAvailable Sorts: (Defaults: {chosenSort}, {chosenDirection})");
+            // Inputting is wrapped in a try clause to handle null-arguments.
             try
             {
+                // === Sort Selection ===
+                foreach (SortTypes sort in Enum.GetValues(typeof(SortTypes)))
+                {
+                    Console.Write($"| {sort} |");
+                }
                 Console.Write("\n : ");
-                //sortInput = Console.ReadLine();
+                sortInput = Console.ReadLine();
+                foreach (SortTypes checkSort in Enum.GetValues(typeof(SortTypes)))
+                {
+                    if (sortInput.ToLower() == checkSort.ToString().ToLower())
+                    {
+                        chosenSort = checkSort;
+                    }
+                }
+                Console.WriteLine($"Using Sort: {chosenSort} \n\n");
+
+
+                // === Direction Selection ===
+                Console.WriteLine($"Direction: (Ascending, Descending) ");
+                Console.Write("\n : ");
+                directionInput = Console.ReadLine();
+
+                // As there are only two directions, only one needs to be checked,
+                // and the other can be 'defaulted'.
+                if (directionInput.ToLower() == "descending")
+                {
+                    chosenDirection = Directions.Descending;
+                }
+                Console.WriteLine($"Direction Chosen: {chosenDirection} \n\n");
+
+                // === Search Value Selection ===
+                Console.WriteLine($"Value to search for:");
+                Console.Write("\n : ");
+                searchString = Console.ReadLine();
+                searchValue = Int32.Parse(searchString);
+
 
                 //state = (State)Enum.Parse(typeof(State), stateInput);
             }
-            catch (Exception ex) { 
-                
+            catch (FormatException) {
+                Console.WriteLine("Invalid data for search-value");
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            List<TimeSpan> times = new List<TimeSpan>();
+
+            // Handles the calling and timing of the sort method
+            DateTime startTime = DateTime.Now;
+
+            file.Sort(chosenSort, chosenDirection);
+
+            DateTime endTime = DateTime.Now;
+            times.Add(TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks));
+
+            // Handles searching for the specified value
+            startTime = DateTime.Now;
+
+            (int Number, int[] indexes) searchResults = file.BinarySearch(0, file.getCount() - 1, searchValue, (int)chosenDirection);
+
+            endTime = DateTime.Now;
+            times.Add(TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks));
+
+            // Handles getting the data-intervals
+            startTime = DateTime.Now;
+
+            List<int> intervals = file.FindIntervals();
+
+            endTime = DateTime.Now;
+            times.Add(TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks));
+
+            // Logs all of the analysis processes to the console.
+            Output logger = new Output();
+            logger.WriteSortResults(file, times.ElementAt(0));
+            logger.WriteSearchResults(searchResults, times.ElementAt(1));
+            logger.WriteIntervals(intervals);
+
+        }
+
+        public static DataCollection MergeFiles(DataCollection leftFile, DataCollection rightFile) {
+
+            // Sort the two files before merging.
+            leftFile.Sort(SortTypes.MergeSort, Directions.Ascending);
+            rightFile.Sort(SortTypes.MergeSort, Directions.Ascending);
+
+            DataCollection mergedFile = new DataCollection("mergedFile");
+            List<int> mergedData = mergedFile.MergeLists(leftFile.getData(), rightFile.getData(), (int) Directions.Ascending);
+            mergedFile.setData(mergedData);
+            return mergedFile;
         }
 
         public static List<int> ReadData(string fileName) {

@@ -53,24 +53,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
         }
 
-        public void WriteIntervals(List<int> intervals, int intervalSpacing) {
-            // yeah
-            int[] longestLengths = { intervals.Count().ToString().Length , (intervals.First() > intervals.Last()) ? intervals.First().ToString().Length : intervals.Last().ToString().Length };
-            string bars = new string('─', longestLengths[0] + longestLengths[1]);
-            string spaces = new string(' ', (longestLengths[0] > longestLengths[1]) ? longestLengths[0]:longestLengths[1]);
-            int index = 1;
-
-            Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Intervals {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
-            
-
-            foreach (int interval in intervals) {
-                Console.WriteLine($"│ {spaces[..(longestLengths[0] - index.ToString().Length)]}{index}   :   {interval}{spaces[..(longestLengths[1] - interval.ToString().Length)]} │");
-                index++;
-            }
-
-            Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
-
-        }
 
         public void WriteSearchResults((int Number, int[] indexes) searchResults, TimeSpan ticksTaken) {
 
@@ -101,6 +83,24 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
 
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}──────────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
+        }
+        public void WriteIntervals(List<int> intervals) {
+            // yeah
+            int[] longestLengths = { intervals.Count().ToString().Length , (intervals.First() > intervals.Last()) ? intervals.First().ToString().Length : intervals.Last().ToString().Length };
+            string bars = new string('─', longestLengths[0] + longestLengths[1]);
+            string spaces = new string(' ', (longestLengths[0] > longestLengths[1]) ? longestLengths[0]:longestLengths[1]);
+            int index = 1;
+
+            Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Intervals {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
+            
+
+            foreach (int interval in intervals) {
+                Console.WriteLine($"│ {spaces[..(longestLengths[0] - index.ToString().Length)]}{index}   :   {interval}{spaces[..(longestLengths[1] - interval.ToString().Length)]} │");
+                index++;
+            }
+
+            Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
+
         }
     }
 }

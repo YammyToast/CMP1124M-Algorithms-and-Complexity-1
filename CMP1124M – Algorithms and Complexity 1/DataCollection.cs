@@ -15,22 +15,35 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public readonly string fileName;
         public int sortDirection;
         private SortTypes sortUsed;
-        
 
-        public DataCollection(List<int> _data, string _fileName) { 
-            data = _data;
-            dataCount = _data.Count;
+
+        public DataCollection(string _fileName) {
             fileName = _fileName;
-            switch (dataCount)
+            
+            if (dataCount <= 256)
             {
-                case (256):
-                    dataInterval = 10;
-                    break;
-                case (2048):
-                    dataInterval = 50;
-                    break;
+                dataInterval = 10;
+            }
+            else { 
+                dataInterval = 50;
             }
         }
+
+        public DataCollection(List<int> _data, string _fileName) : this(_fileName) { 
+            data = _data;
+            dataCount = _data.Count;
+            
+        }
+
+        public List<int> getData() {
+            return data;
+        }
+
+        public void setData(List<int> _data) {
+            data = _data;
+            dataCount = _data.Count;
+        }
+
         /// <summary>
         /// Gets the amount of data values in the data collection.
         /// </summary>
@@ -46,6 +59,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public SortTypes getSortUsed() {
             return sortUsed;
         }
+
+        
 
         
         /// <summary>
@@ -66,20 +81,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// Sorts data in the data-collection into the given direction.
         /// </summary>
         /// <param name="direction">1: Ascending, -1: Descending</param>
-        public void Sort(Directions direction) {
+        public void Sort(SortTypes sort, Directions direction) {
             sortDirection = (int) direction;
             List<int> sortedList = new List<int>();
-            switch (dataCount) {
-                case (256):
-                    sortedList = MergeSort(data, sortDirection);
-                    break;
-                case (2048):
-                    sortedList = MergeSort(data, sortDirection);
-                    break;
-                default:
-                    Console.WriteLine("Unsupported data-length");
-                    break;
-            }
+            sortedList = MergeSort(data, sortDirection);
+            //switch (dataCount) {
+            //    case (256):
+            //        break;
+            //    case (2048):
+            //        sortedList = MergeSort(data, sortDirection);
+            //        break;
+            //    default:
+            //        Console.WriteLine("Unsupported data-length");
+            //        break;
+            //}
             data = sortedList;
         }
 
@@ -105,6 +120,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 // Right array can use midpoint as we know there's an even number of elements.
                 List<int> rightArray = list.GetRange(midPoint, midPoint);
 
+                // PseudoCode
+                // Recursively call this function, splitting the data in halves.
+                // Final items on stack are functions with list parameters of one element.
+                // Gradually pair together lists from the stack until stack is empty.
+
                 List<int> sortedLeft = MergeSort(leftArray, direction);
                 List<int> sortedRight = MergeSort(rightArray, direction);
 
@@ -127,7 +147,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// <param name="right">Sorted List</param>
         /// <param name="direction">1: Sort Ascending, -1: Sort Descending</param>
         /// <returns>A sorted union of the two lists.</returns>
-        private List<int> MergeLists(List<int> left, List<int> right, int direction) {
+        public List<int> MergeLists(List<int> left, List<int> right, int direction) {
             int leftCount = left.Count;
             int rightCount = right.Count;
             List<int> mergedList = new List<int>();
@@ -146,6 +166,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     leftCount--;
                 }
             }
+            // If all of the elements in one stack have been removed,
+            // -concat the remaining items in the remaining list directly.
             if (leftCount != 0) {
                 mergedList.AddRange(left);
             }
