@@ -15,9 +15,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// <param name="ticksTaken"> The time-span over which the sort was performed.</param>
         public void WriteSortResults(DataCollection collection, TimeSpan ticksTaken) {
             // Holds the rows of the table to be iterated over.
-            string[,] lines = new string[4, 2]{
+            string[,] lines = new string[5, 2]{
                 { $"Filename  " , $"{collection.fileName}" },
                 { $"Data Count" , $"{collection.getCount()}" },
+                { $"Sort Used " , $"{collection.getSortUsed()}" },
                 { $"Direction ", $"{(Directions) collection.sortDirection}" },
                 { $"Time Taken", $"{ticksTaken.TotalMilliseconds}ms" }
             };
@@ -52,7 +53,38 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
         }
 
-        public void WriteIntervals(List<int> intervals, int intervalSpacing, TimeSpan ticksTaken) {
+
+        public void WriteSearchResults((int Number, int[] indexes) searchResults, TimeSpan ticksTaken) {
+
+            string[,] lines = new string[3, 2]{
+                { $"Search Number" , $"{searchResults.Number}" },
+                { $"Time Taken   " , $"{ticksTaken.TotalMilliseconds}ms" },
+                { $"Occurs At    " , $""}
+            };
+
+            int longestLength = (searchResults.Number.ToString().Length > ticksTaken.TotalMilliseconds.ToString().Length + 2) ? searchResults.Number.ToString().Length : ticksTaken.TotalMilliseconds.ToString().Length + 2;
+            foreach (int index in searchResults.indexes) {
+                if (index.ToString().Length > longestLength) { 
+                    longestLength = index.ToString().Length;
+                }
+            }   
+
+
+            string spaces = new string(' ', longestLength);
+            string bars = new string('─', 6 + longestLength);
+
+            Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Value Search {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
+            for (int i = 0; i < lines.GetLength(0); i++) {
+
+                Console.WriteLine($"│ {lines[i, 0]} : {lines[i, 1]}{spaces[..(longestLength - lines[i, 1].ToString().Length)]} │");
+            }
+            foreach (int index in searchResults.indexes) {
+                Console.WriteLine($"│                 {index}{spaces[..(spaces.Length - index.ToString().Length)]} │");
+            }
+
+            Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}──────────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
+        }
+        public void WriteIntervals(List<int> intervals) {
             // yeah
             int[] longestLengths = { intervals.Count().ToString().Length , (intervals.First() > intervals.Last()) ? intervals.First().ToString().Length : intervals.Last().ToString().Length };
             string bars = new string('─', longestLengths[0] + longestLengths[1]);
@@ -68,7 +100,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
 
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
-            Console.WriteLine($" Time: {ticksTaken.TotalMilliseconds}ms");
+
         }
     }
 }
