@@ -51,7 +51,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     stateInput = Console.ReadLine();
                     state = (State)Enum.Parse(typeof(State), stateInput);
 
-                    Console.WriteLine(state);
+
 
                     if (state == State.AnalyseFile)
                     {
@@ -86,7 +86,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     {
                         string leftFileName = string.Empty;
                         string rightFileName = string.Empty;
-                        try 
+                        try
                         {
                             while (!dataFileNames.Exists(x => x == leftFileName)) {
                                 Console.WriteLine($"| Loaded Files |");
@@ -121,9 +121,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                         dataFileNames.Add($"{mergedFile.fileName}{fileSuffix}");
                         mergedFileCounter++;
                         state = State.UserInput;
+                    } else if (state == State.Exit) 
+                    { 
+                        Environment.Exit(0);
                     }
-
-
 
 
                     else {

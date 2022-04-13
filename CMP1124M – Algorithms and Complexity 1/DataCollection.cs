@@ -178,6 +178,24 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         }
 
+        // Using Hoare's partition scheme.
+        // 1. Pick a pivot (midpoint?).
+        // 2. Set vars i - lowpoint, j - hightpoint.
+        // 3. Close in i and j to pivot.
+        // 4. If i is greater than the pivot, halt.
+        // 5. If j is smaller than the pivot, halt.
+        // 6. If i and j have halted, switch the two elements at their indexes.
+        // 7. If i and j have the same value, halt.
+        // 8. If i == j. Create a new partitions.
+        // 9. Partitions are the two partitions either side of the pivot.
+        // 10. Repeat until in pairs, then return up the stack.
+
+
+        private List<int> QuickSort(List<int> list, int direction) { 
+            
+        }
+
+
 
 
         /// <summary>
@@ -271,5 +289,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     }
     public enum SortTypes { 
         MergeSort = 1
+    }
+
+    public enum SearchTypes { 
+        BinarySearch = 1,
     }
 }
