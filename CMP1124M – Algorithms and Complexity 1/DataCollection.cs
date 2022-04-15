@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CMP1124M_Algorithms_and_Complexity_1
 {
     internal class DataCollection
@@ -84,17 +85,22 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public void Sort(SortTypes sort, Directions direction) {
             sortDirection = (int) direction;
             List<int> sortedList = new List<int>();
+
+            switch (sort) {
+                case SortTypes.MergeSort:
+                    sortedList = MergeSort(data, sortDirection);
+                    break;
+                case SortTypes.QuickSort:
+                    sortedList = QuickSort(data, 0, dataCount - 1, sortDirection);
+                    break;
+
+                default:
+                    sortedList = MergeSort(data, sortDirection);
+                    break;
+            }
+
             sortedList = MergeSort(data, sortDirection);
-            //switch (dataCount) {
-            //    case (256):
-            //        break;
-            //    case (2048):
-            //        sortedList = MergeSort(data, sortDirection);
-            //        break;
-            //    default:
-            //        Console.WriteLine("Unsupported data-length");
-            //        break;
-            //}
+            
             data = sortedList;
         }
 
@@ -190,11 +196,59 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         // 9. Partitions are the two partitions either side of the pivot.
         // 10. Repeat until in pairs, then return up the stack.
 
+        private List<int> QuickSort(List<int> list, int lowerBoundary, int upperBoundary, int direction)
+        {
+            int partitionIndex;
+            if (lowerBoundary >= 0 && upperBoundary >= 0 && lowerBoundary < upperBoundary)
+            {
+                partitionIndex = QSPartition(list, lowerBoundary, upperBoundary, direction);
 
-        private List<int> QuickSort(List<int> list, int direction) { 
-            
+                QuickSort(list, lowerBoundary, partitionIndex - 1, direction);
+                QuickSort(list, partitionIndex + 1, upperBoundary, direction);
+            }
+            return list;
         }
 
+        private static int QSPartition(List<int> partition, int lowerBoundary, int upperBoundary, int direction) {
+
+            int pivot = partition.ElementAt(lowerBoundary);
+            int pivotVal = partition.ElementAt(pivot);
+
+            while (lowerBoundary < upperBoundary)
+            {
+                while ((partition.ElementAt(lowerBoundary) * direction) < (pivotVal * direction))
+                {
+                    lowerBoundary++;
+                }
+                while ((partition.ElementAt(upperBoundary) * direction) > (pivotVal * direction)) {
+                    upperBoundary--;
+                }
+
+                if (lowerBoundary < upperBoundary)
+                {
+                    if (partition.ElementAt(lowerBoundary) == partition.ElementAt(upperBoundary))
+                    {
+                        return upperBoundary;
+                    }
+
+                    int switchVal = partition.ElementAt(lowerBoundary);
+                    partition[lowerBoundary] = partition.ElementAt(upperBoundary);
+                    partition[upperBoundary] = switchVal;
+                }
+                else {
+                    return upperBoundary;
+                }
+                
+
+
+
+            }
+            return upperBoundary;
+            
+
+
+
+        }
 
 
 
@@ -288,7 +342,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
     }
     public enum SortTypes { 
-        MergeSort = 1
+        MergeSort = 1,
+        QuickSort
     }
 
     public enum SearchTypes { 
