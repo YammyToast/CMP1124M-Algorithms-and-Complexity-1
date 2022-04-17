@@ -78,6 +78,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return intervals;
         }
 
+
+
+
+
+
         /// <summary>
         /// Sorts data in the data-collection into the given direction.
         /// </summary>
@@ -97,7 +102,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 case SortTypes.QuickSort:
                     QuickSort quickSort = new QuickSort(data, sortDirection);
                     sortedList = quickSort.getData();
-                    
+                    break;
+                case SortTypes.HeapSort:
+                    sortedList = HeapSort(data, dataCount, sortDirection);
                     break;
 
                 default:
@@ -109,6 +116,12 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             
             data = sortedList;
         }
+
+
+
+
+
+
 
         /// <summary>
         /// Entry method to merge-sort. Calls itself recursively.
@@ -190,38 +203,50 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         }
 
-        //private static void QuickSort(List<int> list, int lowerBoundary, int upperBoundary, int direction) {
-        //    int lowerIndex = lowerBoundary + 1;
-        //    int upperIndex = upperBoundary;
+        
+        private List<int> HeapSort(List<int> list, int count, int direction) {
+            for (int partitionTail = (count / 2) - 1; partitionTail >= 0; partitionTail--) {
+                list = BuildHeap(list, count, partitionTail, direction);
+            }
+            for (int i = count - 1; i >= 0; i--) {
+                int temp = list.ElementAt(0);
+                list[0] = list.ElementAt(i);
+                list[i] = temp;
+                list = BuildHeap(list, i, 0, direction);
+            }
+            return list;
+        }
 
-        //    int pivotNum = list.ElementAt(lowerBoundary);
+        private List<int> BuildHeap(List<int> list, int count, int partitionTail, int direction) {
+            
+            int leftBoundary = (partitionTail * 2) + 1;
+            int rightBoundary = (partitionTail * 2) + 2;
+            
 
-        //    while (lowerIndex <= upperIndex) {
-        //        while (lowerIndex <= upperIndex) {
-        //            while ((list.ElementAt(lowerIndex) * direction) < (pivotNum * direction)) {
-        //                lowerIndex++;
-        //            }
-        //            while ((list.ElementAt(upperIndex) * direction) > (pivotNum * direction)) { 
-        //                upperIndex--;
-        //            }
+            int largestIndex = partitionTail;
 
-        //            if (lowerIndex <= upperIndex) {
-        //                int temp = list.ElementAt(lowerIndex);
-        //                list[lowerIndex] = list.ElementAt(upperIndex);
-        //                list[upperIndex] = temp;
+            if (leftBoundary < count && (list.ElementAt(leftBoundary) * direction) > (list.ElementAt(largestIndex) * direction)) {
+                largestIndex = leftBoundary;
+            }
+            if (rightBoundary < count && (list.ElementAt(rightBoundary) * direction) > (list.ElementAt(largestIndex) * direction)) {
+                largestIndex = rightBoundary;
+            }
+            // i.e if an element has been changed.
+            if (largestIndex != partitionTail) {
+                int temp = list.ElementAt(largestIndex);
+                list[largestIndex] = list.ElementAt(partitionTail);
+                list[partitionTail] = temp;
+                
+                list = BuildHeap(list, count, largestIndex, direction);
+            }
 
-        //            }
-        //        }
-        //    }
-        //    if (lowerBoundary < upperIndex) {
-        //        QuickSort(list, lowerBoundary, upperIndex, direction);
-        //    }
 
-        //    if (lowerIndex < upperBoundary) { 
-        //        QuickSort(list, lowerIndex, upperBoundary, direction);  
-        //    }
+            
 
-        //}
+            return list;
+      
+        }
+
 
         
 
@@ -317,7 +342,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     }
     public enum SortTypes { 
         MergeSort = 1,
-        QuickSort
+        QuickSort,
+        HeapSort
     }
 
     public enum SearchTypes { 
