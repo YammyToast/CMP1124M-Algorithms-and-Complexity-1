@@ -105,9 +105,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     break;
                 case SortTypes.HeapSort:
                     sortedList = HeapSort(data, dataCount, sortDirection);
-                    foreach (int element in sortedList) {
-                        Console.Write($"{element} ");
-                    }
                     break;
 
                 default:
@@ -215,15 +212,18 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 int temp = list.ElementAt(0);
                 list[0] = list.ElementAt(i);
                 list[i] = temp;
-                list = BuildHeap(list, count, 0, direction);
+                list = BuildHeap(list, i, 0, direction);
             }
             return list;
         }
 
         private List<int> BuildHeap(List<int> list, int count, int partitionTail, int direction) {
+            
+            int leftBoundary = (partitionTail * 2) + 1;
+            int rightBoundary = (partitionTail * 2) + 2;
+            
+
             int largestIndex = partitionTail;
-            int leftBoundary = (partitionTail + 1) * 2;
-            int rightBoundary = (partitionTail + 2) * 2;
 
             if (leftBoundary < count && (list.ElementAt(leftBoundary) * direction) > (list.ElementAt(largestIndex) * direction)) {
                 largestIndex = leftBoundary;
@@ -236,8 +236,12 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 int temp = list.ElementAt(largestIndex);
                 list[largestIndex] = list.ElementAt(partitionTail);
                 list[partitionTail] = temp;
+                
                 list = BuildHeap(list, count, largestIndex, direction);
             }
+
+
+            
 
             return list;
       

@@ -23,11 +23,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         private static void Sort(int lowerBoundary, int upperBoundary, int direction)
         {
+
             if (lowerBoundary < upperBoundary)
             {
                 int partitionIndex = Partition(lowerBoundary, upperBoundary, direction);
-
-               
                 Sort(lowerBoundary, partitionIndex - 1, direction);
                 Sort(partitionIndex + 1, upperBoundary, direction);
             }
@@ -35,12 +34,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         private static int Partition(int lowerBoundary, int upperBoundary, int direction)
         {
-            
             int pivotVal = data[upperBoundary];
-
             int lowerIndex = (lowerBoundary - 1);
 
-           
             for (int j = lowerBoundary; j < upperBoundary; j++)
             {
                 if ((data[j] * direction) <= (pivotVal * direction))

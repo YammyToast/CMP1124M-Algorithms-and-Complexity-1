@@ -11,7 +11,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             List<string> dataFileNames = new List<string>() {
                 "Share_1_256", "Share_1_2048",
                 "Share_2_256", "Share_2_2048",
-                "Share_3_256", "Share_3_2048"
+                "Share_3_256", "Share_3_2048",
+                "smalltest"
             };
 
             // Initialises a list to store all of the file-data.
