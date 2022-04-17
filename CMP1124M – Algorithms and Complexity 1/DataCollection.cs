@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CMP1124M_Algorithms_and_Complexity_1
 {
     internal class DataCollection
@@ -82,19 +83,30 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// </summary>
         /// <param name="direction">1: Ascending, -1: Descending</param>
         public void Sort(SortTypes sort, Directions direction) {
+            // Saves the sort used, and the direction as attributes of the datacollection.
             sortDirection = (int) direction;
+            sortUsed = (SortTypes) sort;
+
+
             List<int> sortedList = new List<int>();
+
+            switch (sort) {
+                case SortTypes.MergeSort:
+                    sortedList = MergeSort(data, sortDirection);
+                    break;
+                case SortTypes.QuickSort:
+                    QuickSort quickSort = new QuickSort(data, sortDirection);
+                    sortedList = quickSort.getData();
+                    
+                    break;
+
+                default:
+                    sortedList = MergeSort(data, sortDirection);
+                    break;
+            }
+
             sortedList = MergeSort(data, sortDirection);
-            //switch (dataCount) {
-            //    case (256):
-            //        break;
-            //    case (2048):
-            //        sortedList = MergeSort(data, sortDirection);
-            //        break;
-            //    default:
-            //        Console.WriteLine("Unsupported data-length");
-            //        break;
-            //}
+            
             data = sortedList;
         }
 
@@ -178,6 +190,40 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         }
 
+        //private static void QuickSort(List<int> list, int lowerBoundary, int upperBoundary, int direction) {
+        //    int lowerIndex = lowerBoundary + 1;
+        //    int upperIndex = upperBoundary;
+
+        //    int pivotNum = list.ElementAt(lowerBoundary);
+
+        //    while (lowerIndex <= upperIndex) {
+        //        while (lowerIndex <= upperIndex) {
+        //            while ((list.ElementAt(lowerIndex) * direction) < (pivotNum * direction)) {
+        //                lowerIndex++;
+        //            }
+        //            while ((list.ElementAt(upperIndex) * direction) > (pivotNum * direction)) { 
+        //                upperIndex--;
+        //            }
+
+        //            if (lowerIndex <= upperIndex) {
+        //                int temp = list.ElementAt(lowerIndex);
+        //                list[lowerIndex] = list.ElementAt(upperIndex);
+        //                list[upperIndex] = temp;
+
+        //            }
+        //        }
+        //    }
+        //    if (lowerBoundary < upperIndex) {
+        //        QuickSort(list, lowerBoundary, upperIndex, direction);
+        //    }
+
+        //    if (lowerIndex < upperBoundary) { 
+        //        QuickSort(list, lowerIndex, upperBoundary, direction);  
+        //    }
+
+        //}
+
+        
 
 
         /// <summary>
@@ -270,6 +316,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
     }
     public enum SortTypes { 
-        MergeSort = 1
+        MergeSort = 1,
+        QuickSort
+    }
+
+    public enum SearchTypes { 
+        BinarySearch = 1,
     }
 }
