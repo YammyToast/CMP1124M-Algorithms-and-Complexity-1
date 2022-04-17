@@ -83,7 +83,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// </summary>
         /// <param name="direction">1: Ascending, -1: Descending</param>
         public void Sort(SortTypes sort, Directions direction) {
+            // Saves the sort used, and the direction as attributes of the datacollection.
             sortDirection = (int) direction;
+            sortUsed = (SortTypes) sort;
+
+
             List<int> sortedList = new List<int>();
 
             switch (sort) {
@@ -91,7 +95,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     sortedList = MergeSort(data, sortDirection);
                     break;
                 case SortTypes.QuickSort:
-                    sortedList = QuickSort(data, 0, dataCount - 1, sortDirection);
+                    QuickSort quickSort = new QuickSort(data, sortDirection);
+                    sortedList = quickSort.getData();
+                    
                     break;
 
                 default:
@@ -184,72 +190,40 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         }
 
-        // Using Hoare's partition scheme.
-        // 1. Pick a pivot (midpoint?).
-        // 2. Set vars i - lowpoint, j - hightpoint.
-        // 3. Close in i and j to pivot.
-        // 4. If i is greater than the pivot, halt.
-        // 5. If j is smaller than the pivot, halt.
-        // 6. If i and j have halted, switch the two elements at their indexes.
-        // 7. If i and j have the same value, halt.
-        // 8. If i == j. Create a new partitions.
-        // 9. Partitions are the two partitions either side of the pivot.
-        // 10. Repeat until in pairs, then return up the stack.
+        //private static void QuickSort(List<int> list, int lowerBoundary, int upperBoundary, int direction) {
+        //    int lowerIndex = lowerBoundary + 1;
+        //    int upperIndex = upperBoundary;
 
-        private List<int> QuickSort(List<int> list, int lowerBoundary, int upperBoundary, int direction)
-        {
-            int partitionIndex;
-            if (lowerBoundary >= 0 && upperBoundary >= 0 && lowerBoundary < upperBoundary)
-            {
-                partitionIndex = QSPartition(list, lowerBoundary, upperBoundary, direction);
+        //    int pivotNum = list.ElementAt(lowerBoundary);
 
-                QuickSort(list, lowerBoundary, partitionIndex - 1, direction);
-                QuickSort(list, partitionIndex + 1, upperBoundary, direction);
-            }
-            return list;
-        }
+        //    while (lowerIndex <= upperIndex) {
+        //        while (lowerIndex <= upperIndex) {
+        //            while ((list.ElementAt(lowerIndex) * direction) < (pivotNum * direction)) {
+        //                lowerIndex++;
+        //            }
+        //            while ((list.ElementAt(upperIndex) * direction) > (pivotNum * direction)) { 
+        //                upperIndex--;
+        //            }
 
-        private static int QSPartition(List<int> partition, int lowerBoundary, int upperBoundary, int direction) {
+        //            if (lowerIndex <= upperIndex) {
+        //                int temp = list.ElementAt(lowerIndex);
+        //                list[lowerIndex] = list.ElementAt(upperIndex);
+        //                list[upperIndex] = temp;
 
-            int pivot = partition.ElementAt(lowerBoundary);
-            int pivotVal = partition.ElementAt(pivot);
+        //            }
+        //        }
+        //    }
+        //    if (lowerBoundary < upperIndex) {
+        //        QuickSort(list, lowerBoundary, upperIndex, direction);
+        //    }
 
-            while (lowerBoundary < upperBoundary)
-            {
-                while ((partition.ElementAt(lowerBoundary) * direction) < (pivotVal * direction))
-                {
-                    lowerBoundary++;
-                }
-                while ((partition.ElementAt(upperBoundary) * direction) > (pivotVal * direction)) {
-                    upperBoundary--;
-                }
+        //    if (lowerIndex < upperBoundary) { 
+        //        QuickSort(list, lowerIndex, upperBoundary, direction);  
+        //    }
 
-                if (lowerBoundary < upperBoundary)
-                {
-                    if (partition.ElementAt(lowerBoundary) == partition.ElementAt(upperBoundary))
-                    {
-                        return upperBoundary;
-                    }
+        //}
 
-                    int switchVal = partition.ElementAt(lowerBoundary);
-                    partition[lowerBoundary] = partition.ElementAt(upperBoundary);
-                    partition[upperBoundary] = switchVal;
-                }
-                else {
-                    return upperBoundary;
-                }
-                
-
-
-
-            }
-            return upperBoundary;
-            
-
-
-
-        }
-
+        
 
 
         /// <summary>
