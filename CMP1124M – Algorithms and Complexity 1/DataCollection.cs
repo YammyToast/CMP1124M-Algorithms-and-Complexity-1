@@ -71,7 +71,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public List<int> FindIntervals() {
             List<int> intervals = new List<int>();
             int intervalIndex = 0;
-            while (intervalIndex < dataCount) {
+            while ((intervalIndex + dataInterval) < dataCount - 1) {
                 intervals.Add(data.ElementAt(intervalIndex));
                 intervalIndex += dataInterval;
             }
@@ -96,15 +96,19 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             List<int> sortedList = new List<int>();
 
             switch (sort) {
-                case SortTypes.MergeSort:
+                case SortTypes.Merge:
                     sortedList = MergeSort(data, sortDirection);
                     break;
-                case SortTypes.QuickSort:
+                case SortTypes.Quick:
                     QuickSort quickSort = new QuickSort(data, sortDirection);
                     sortedList = quickSort.getData();
                     break;
-                case SortTypes.HeapSort:
+                case SortTypes.Heap:
                     sortedList = HeapSort(data, dataCount, sortDirection);
+                    break;
+                case SortTypes.Insertion:
+                    sortedList = InsertionSort(data, sortDirection);
+                    
                     break;
 
                 default:
@@ -339,11 +343,28 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return (searchValue, Enumerable.Range(lowerSearchBoundary + 1, count).ToArray());
         }
 
+
+
+        private List<int> InsertionSort(List<int> list, int direction) {
+            for (int index = 0; index < list.Count; index++) { 
+                int moveValue = list[index];
+                int searchIndex =  index - 1;
+                while (searchIndex >= 0 && (moveValue * direction) < (list[searchIndex] * direction)) {
+                    list[searchIndex + 1] = list[searchIndex];
+                    searchIndex--;
+                }
+                list[searchIndex + 1] = moveValue;
+            }
+            return list;
+        }
+
+
     }
     public enum SortTypes { 
-        MergeSort = 1,
-        QuickSort,
-        HeapSort
+        Merge = 1,
+        Quick,
+        Heap,
+        Insertion
     }
 
     public enum SearchTypes { 

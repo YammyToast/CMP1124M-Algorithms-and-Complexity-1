@@ -189,7 +189,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
 
         public static void AnalyseFile(DataCollection file) {
-            SortTypes chosenSort  = SortTypes.MergeSort;
+            SortTypes chosenSort  = SortTypes.Merge;
             Directions chosenDirection = Directions.Ascending;
             string sortInput = string.Empty;
             string directionInput = string.Empty;
@@ -284,8 +284,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public static DataCollection MergeFiles(DataCollection leftFile, DataCollection rightFile) {
 
             // Sort the two files before merging.
-            leftFile.Sort(SortTypes.MergeSort, Directions.Ascending);
-            rightFile.Sort(SortTypes.MergeSort, Directions.Ascending);
+            leftFile.Sort(SortTypes.Merge, Directions.Ascending);
+            rightFile.Sort(SortTypes.Merge, Directions.Ascending);
 
             DataCollection mergedFile = new DataCollection("mergedFile");
             List<int> mergedData = mergedFile.MergeLists(leftFile.getData(), rightFile.getData(), (int) Directions.Ascending);
