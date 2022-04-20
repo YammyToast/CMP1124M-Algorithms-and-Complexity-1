@@ -116,9 +116,26 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     break;
             }
 
-            sortedList = MergeSort(data, sortDirection);
             
             data = sortedList;
+        }
+
+        public (int Number, int[] indexes) Search(SearchTypes search, int searchValue, int direction) {
+            (int Number, int[] indexes) searchResults = (searchValue, new int[1] { -1 });
+            switch (search) {
+                case SearchTypes.Binary:
+                    searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
+                    break;
+                case SearchTypes.Interpolation:
+                    searchResults = InterpolationSort(0, data.Count - 1, searchValue, direction);
+                    break;
+                default:
+                    searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
+                    break;
+
+            }
+
+            return searchResults;
         }
 
 
@@ -251,9 +268,18 @@ namespace CMP1124M_Algorithms_and_Complexity_1
       
         }
 
-
-        
-
+        private List<int> InsertionSort(List<int> list, int direction) {
+            for (int index = 0; index < list.Count; index++) { 
+                int moveValue = list[index];
+                int searchIndex =  index - 1;
+                while (searchIndex >= 0 && (moveValue * direction) < (list[searchIndex] * direction)) {
+                    list[searchIndex + 1] = list[searchIndex];
+                    searchIndex--;
+                }
+                list[searchIndex + 1] = moveValue;
+            }
+            return list;
+        }
 
         /// <summary>
         /// Performs a binary search on the ordered list, given the direction the list is sorted in.
@@ -297,6 +323,44 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
 
         }
+
+        private (int Number, int[] indexes) InterpolationSort(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
+
+            Console.Write($"lower: {lowerBoundary}, upper: {upperBoundary} ");
+            if (searchValue >= data.ElementAt(lowerBoundary) && searchValue <= data.ElementAt(upperBoundary) && lowerBoundary <= upperBoundary) {
+                
+                int interpolationPosition = (lowerBoundary + ((searchValue - data.ElementAt(lowerBoundary)) * (upperBoundary - lowerBoundary))) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary));
+                Console.Write($"interpolation: {interpolationPosition} \n");
+                if (data.ElementAt(interpolationPosition) == searchValue)
+                {
+                    return GetSortedRange(interpolationPosition, lowerBoundary);
+                }
+                else if (upperBoundary - 1 == lowerBoundary)
+                {
+
+                    int closestLower = Math.Abs((data.ElementAt(interpolationPosition) * direction) - data.ElementAt(lowerBoundary));
+                    int closestUpper = Math.Abs((data.ElementAt(interpolationPosition) * direction) - data.ElementAt(upperBoundary));
+                    if (closestLower <= closestUpper)
+                    {
+                        return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
+                    }
+                    else
+                    {
+                        return GetSortedRange(data.ElementAt(upperBoundary), upperBoundary);
+                    }
+
+                }
+                else if (data.ElementAt(interpolationPosition) < searchValue)
+                {
+                    return InterpolationSort(lowerBoundary, interpolationPosition - 1, searchValue, direction);
+                }
+                else {
+                    return InterpolationSort(interpolationPosition + 1, upperBoundary, searchValue, direction);
+                }
+            }
+            return (searchValue, new int[0]);
+        }
+
 
         /// <summary>
         /// Finds the count of neighbouring values surrounding the given index and value to search for in the list. 
@@ -345,18 +409,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
 
 
-        private List<int> InsertionSort(List<int> list, int direction) {
-            for (int index = 0; index < list.Count; index++) { 
-                int moveValue = list[index];
-                int searchIndex =  index - 1;
-                while (searchIndex >= 0 && (moveValue * direction) < (list[searchIndex] * direction)) {
-                    list[searchIndex + 1] = list[searchIndex];
-                    searchIndex--;
-                }
-                list[searchIndex + 1] = moveValue;
-            }
-            return list;
-        }
 
 
     }
@@ -368,6 +420,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     }
 
     public enum SearchTypes { 
-        BinarySearch = 1,
+        Binary = 1,
+        Interpolation
     }
 }

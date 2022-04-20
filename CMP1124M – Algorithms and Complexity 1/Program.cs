@@ -190,9 +190,12 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         public static void AnalyseFile(DataCollection file) {
             SortTypes chosenSort  = SortTypes.Merge;
+            SearchTypes chosenSearch = SearchTypes.Binary;
             Directions chosenDirection = Directions.Ascending;
+
             string sortInput = string.Empty;
             string directionInput = string.Empty;
+            string searchInput = string.Empty;
             string searchString = string.Empty;
             int searchValue = 0;
             
@@ -235,9 +238,23 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 Console.Write("\n : ");
                 searchString = Console.ReadLine();
                 searchValue = Int32.Parse(searchString);
+                Console.WriteLine($"Search Value Selected: {searchValue} \n\n");
 
+                // === Search Algorithm Selection ===
+                if (searchString != string.Empty) {
+                    Console.WriteLine($"Search Algorithm to use: (Binary, Interpolation)  (Default: Binary)");
+                    Console.Write("\n : ");
+                    searchInput = Console.ReadLine();
+                    foreach (SearchTypes checkSearch in Enum.GetValues(typeof(SearchTypes)))
+                    {
+                        if (searchInput.ToLower() == checkSearch.ToString().ToLower())
+                        {
+                            chosenSearch = checkSearch;
+                        }
+                    }
+                    Console.WriteLine($"Searching using {chosenSearch}");
+                }
 
-                //state = (State)Enum.Parse(typeof(State), stateInput);
             }
             catch (FormatException) {
                 Console.WriteLine("Invalid data for search-value");
@@ -260,7 +277,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             // Handles searching for the specified value
             startTime = DateTime.Now;
 
-            (int Number, int[] indexes) searchResults = file.BinarySearch(0, file.getCount() - 1, searchValue, (int)chosenDirection);
+            (int Number, int[] indexes) searchResults = file.Search(chosenSearch, searchValue, (int) chosenDirection);
 
             endTime = DateTime.Now;
             times.Add(TimeSpan.FromTicks(endTime.Ticks - startTime.Ticks));
