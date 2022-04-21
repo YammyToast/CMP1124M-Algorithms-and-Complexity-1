@@ -18,7 +18,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             // Initialises a list to store all of the file-data.
             List<DataCollection> dataObjects = new List<DataCollection>();
 
-
             int mergedFileCounter = 0;
 
             // Loads the file-data into the list using the preset file-names.
@@ -39,6 +38,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             catch (Exception ex) {
                 Console.WriteLine($"Could not create all data collections: {ex}");
             }
+
+            TestHandler handler = new TestHandler(dataObjects);
+            //handler.RunTests();
 
 
 

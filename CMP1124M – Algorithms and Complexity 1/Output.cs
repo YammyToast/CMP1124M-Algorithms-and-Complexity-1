@@ -15,12 +15,13 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// <param name="ticksTaken"> The time-span over which the sort was performed.</param>
         public void WriteSortResults(DataCollection collection, TimeSpan ticksTaken) {
             // Holds the rows of the table to be iterated over.
-            string[,] lines = new string[5, 2]{
-                { $"Filename  " , $"{collection.fileName}" },
-                { $"Data Count" , $"{collection.getCount()}" },
-                { $"Sort Used " , $"{collection.getSortUsed()}" },
-                { $"Direction ", $"{(Directions) collection.sortDirection}" },
-                { $"Time Taken", $"{ticksTaken.TotalMilliseconds}ms" }
+            string[,] lines = new string[6, 2]{
+                { $"Filename   " , $"{collection.fileName}" },
+                { $"Data Count " , $"{collection.getCount()}" },
+                { $"Sort Used  " , $"{collection.getSortUsed()}" },
+                { $"Direction  ", $"{(Directions) collection.sortDirection}" },
+                { $"Steps Taken", $"{collection.steps}" },
+                { $"Time Taken ", $"{ticksTaken.TotalMilliseconds}ms" }
             };
             // Holds:
             // 1. The longest total length of a line.
