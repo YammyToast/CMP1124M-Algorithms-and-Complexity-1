@@ -17,6 +17,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public int sortDirection;
         private SortTypes sortUsed;
 
+        public int steps = 0;
+
 
         public DataCollection(string _fileName) {
             fileName = _fileName;
@@ -92,6 +94,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             sortDirection = (int) direction;
             sortUsed = (SortTypes) sort;
 
+            steps = 0;
+
 
             List<int> sortedList = new List<int>();
 
@@ -116,9 +120,26 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                     break;
             }
 
-            sortedList = MergeSort(data, sortDirection);
             
             data = sortedList;
+        }
+
+        public (int Number, int[] indexes) Search(SearchTypes search, int searchValue, int direction) {
+            (int Number, int[] indexes) searchResults = (searchValue, new int[1] { -1 });
+            switch (search) {
+                case SearchTypes.Binary:
+                    searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
+                    break;
+                case SearchTypes.Interpolation:
+                    searchResults = InterpolationSort(0, data.Count - 1, searchValue, direction);
+                    break;
+                default:
+                    searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
+                    break;
+
+            }
+
+            return searchResults;
         }
 
 
@@ -146,8 +167,10 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 int midPoint = list.Count / 2;
 
                 List<int> leftArray = list.GetRange(0, midPoint);
+                steps++;
                 // Right array can use midpoint as we know there's an even number of elements.
                 List<int> rightArray = list.GetRange(midPoint, midPoint);
+                steps++;
 
                 // PseudoCode
                 // Recursively call this function, splitting the data in halves.
@@ -155,9 +178,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 // Gradually pair together lists from the stack until stack is empty.
 
                 List<int> sortedLeft = MergeSort(leftArray, direction);
+                steps++;
                 List<int> sortedRight = MergeSort(rightArray, direction);
-
+                steps++;
                 List<int> result = MergeLists(sortedLeft, sortedRight, direction);
+                steps++;
                 return result;
 
 
@@ -178,7 +203,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         /// <returns>A sorted union of the two lists.</returns>
         public List<int> MergeLists(List<int> left, List<int> right, int direction) {
             int leftCount = left.Count;
+            steps++;
             int rightCount = right.Count;
+            steps++;
             List<int> mergedList = new List<int>();
             
             while (leftCount != 0 && rightCount != 0)
@@ -186,12 +213,16 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 if ((left.First() * direction) >= (right.First() * direction))
                 {
                     mergedList.Add(right.First());
+                    steps++;
                     right.RemoveAt(0);
+                    steps++;
                     rightCount--;
                 }
                 else { 
                     mergedList.Add(left.First());
+                    steps++;
                     left.RemoveAt(0);
+                    steps++;
                     leftCount--;
                 }
             }
@@ -199,9 +230,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             // -concat the remaining items in the remaining list directly.
             if (leftCount != 0) {
                 mergedList.AddRange(left);
+                steps++;
             }
             if (rightCount != 0) {
                 mergedList.AddRange(right);
+                steps++;
             }
             return mergedList;
 
@@ -211,11 +244,13 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         private List<int> HeapSort(List<int> list, int count, int direction) {
             for (int partitionTail = (count / 2) - 1; partitionTail >= 0; partitionTail--) {
                 list = BuildHeap(list, count, partitionTail, direction);
+                steps++;
             }
             for (int i = count - 1; i >= 0; i--) {
                 int temp = list.ElementAt(0);
                 list[0] = list.ElementAt(i);
                 list[i] = temp;
+                steps++;
                 list = BuildHeap(list, i, 0, direction);
             }
             return list;
@@ -224,8 +259,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         private List<int> BuildHeap(List<int> list, int count, int partitionTail, int direction) {
             
             int leftBoundary = (partitionTail * 2) + 1;
+
             int rightBoundary = (partitionTail * 2) + 2;
-            
+
 
             int largestIndex = partitionTail;
 
@@ -240,7 +276,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 int temp = list.ElementAt(largestIndex);
                 list[largestIndex] = list.ElementAt(partitionTail);
                 list[partitionTail] = temp;
-                
+                steps++;
                 list = BuildHeap(list, count, largestIndex, direction);
             }
 
@@ -251,9 +287,22 @@ namespace CMP1124M_Algorithms_and_Complexity_1
       
         }
 
+        private List<int> InsertionSort(List<int> list, int direction) {
+            for (int index = 0; index < list.Count; index++) { 
+                int moveValue = list[index];
+                
+                int searchIndex =  index - 1;
 
-        
-
+                while (searchIndex >= 0 && (moveValue * direction) < (list[searchIndex] * direction)) {
+                    list[searchIndex + 1] = list[searchIndex];
+                    steps++;
+                    searchIndex--;
+                }
+                list[searchIndex + 1] = moveValue;
+                steps++;
+            }
+            return list;
+        }
 
         /// <summary>
         /// Performs a binary search on the ordered list, given the direction the list is sorted in.
@@ -297,6 +346,64 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
 
         }
+
+        private (int Number, int[] indexes) InterpolationSort(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
+            
+            if (data.ElementAt(0) > searchValue) return GetSortedRange(data.ElementAt(0), 0);
+            if (data.ElementAt(dataCount - 1) < searchValue) return GetSortedRange(data.ElementAt(dataCount - 1), dataCount - 1);
+
+            int lowerVal = data.ElementAt(lowerBoundary);
+            int upperVal = data.ElementAt(upperBoundary);
+
+            //Console.Write($"search: {searchValue}, lower: {lowerBoundary} => {data.ElementAt(lowerBoundary)}, upper: {upperBoundary} => {data.ElementAt(upperBoundary)} ");
+            if ((searchValue * direction) >= (data.ElementAt(lowerBoundary) * direction) && (searchValue * direction) <= (data.ElementAt(upperBoundary) * direction) && lowerBoundary <= upperBoundary) {
+
+                Console.WriteLine("test");
+                //int interpolationPosition = (lowerBoundary + ((searchValue - data.ElementAt(lowerBoundary)) * (upperBoundary - lowerBoundary))) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary));
+                int interpolationPosition = lowerBoundary + (((upperBoundary - lowerBoundary) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary))) * (searchValue - data.ElementAt(lowerBoundary)));
+                
+                Console.Write($"interpolation: {interpolationPosition}, interpolationVal: {data.ElementAt(interpolationPosition)} \n");
+                if (data.ElementAt(interpolationPosition) == searchValue)
+                {
+                    
+                    return GetSortedRange(searchValue, interpolationPosition);
+                }                
+                else if ((data.ElementAt(interpolationPosition) * direction) > (searchValue * direction))
+                {
+                    return InterpolationSort(lowerBoundary, interpolationPosition - 1, searchValue, direction);
+                }
+                else {
+                    return InterpolationSort(interpolationPosition + 1, upperBoundary, searchValue, direction);
+                }
+            }
+
+            //Console.WriteLine($"Search value doesn't exist in data set");
+            try
+            {
+
+                if ((searchValue * direction) >= (data.ElementAt(lowerBoundary - 1) * direction) && (searchValue * direction) <= (data.ElementAt(lowerBoundary) * direction))
+                {
+
+                    int closestLower = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary - 1));
+                    int closestUpper = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary));
+                    if (closestLower <= closestUpper)
+                    {
+                        return GetSortedRange(data.ElementAt(lowerBoundary - 1), lowerBoundary - 1);
+                    }
+                    else
+                    {
+                        return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
+                    }
+
+                }
+            }
+            catch (Exception ex) { 
+                
+            }
+            // Something is wrong if it gets to here.
+            return (searchValue, new int[0]);
+        }
+
 
         /// <summary>
         /// Finds the count of neighbouring values surrounding the given index and value to search for in the list. 
@@ -345,18 +452,6 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
 
 
-        private List<int> InsertionSort(List<int> list, int direction) {
-            for (int index = 0; index < list.Count; index++) { 
-                int moveValue = list[index];
-                int searchIndex =  index - 1;
-                while (searchIndex >= 0 && (moveValue * direction) < (list[searchIndex] * direction)) {
-                    list[searchIndex + 1] = list[searchIndex];
-                    searchIndex--;
-                }
-                list[searchIndex + 1] = moveValue;
-            }
-            return list;
-        }
 
 
     }
@@ -368,6 +463,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     }
 
     public enum SearchTypes { 
-        BinarySearch = 1,
+        Binary = 1,
+        Interpolation
     }
 }
