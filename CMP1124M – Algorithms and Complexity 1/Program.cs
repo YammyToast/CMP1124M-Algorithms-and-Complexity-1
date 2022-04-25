@@ -42,6 +42,8 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             TestHandler handler = new TestHandler(dataObjects);
             //handler.RunTests();
 
+            //handler.RunSearch();
+
 
 
             State state = State.UserInput;
@@ -244,7 +246,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
                 // === Search Algorithm Selection ===
                 if (searchString != string.Empty) {
-                    Console.WriteLine($"Search Algorithm to use: (Binary, Interpolation)  (Default: Binary)");
+                    Console.WriteLine($"Search Algorithm to use: (Binary, Jump)  (Default: Binary)");
                     Console.Write("\n : ");
                     searchInput = Console.ReadLine();
                     foreach (SearchTypes checkSearch in Enum.GetValues(typeof(SearchTypes)))
@@ -295,7 +297,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             // Logs all of the analysis processes to the console.
             Output logger = new Output();
             logger.WriteSortResults(file, times.ElementAt(0));
-            logger.WriteSearchResults(searchResults, times.ElementAt(1));
+            logger.WriteSearchResults(searchResults, times.ElementAt(1), file.steps);
             logger.WriteIntervals(intervals);
 
         }

@@ -55,11 +55,12 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         }
 
 
-        public void WriteSearchResults((int Number, int[] indexes) searchResults, TimeSpan ticksTaken) {
+        public void WriteSearchResults((int Number, int[] indexes) searchResults, TimeSpan ticksTaken, long stepsTaken) {
 
-            string[,] lines = new string[3, 2]{
+            string[,] lines = new string[4, 2]{
                 { $"Search Number" , $"{searchResults.Number}" },
                 { $"Time Taken   " , $"{ticksTaken.TotalMilliseconds}ms" },
+                { $"Steps Taken  " , $"{stepsTaken}"},
                 { $"Occurs At    " , $""}
             };
 

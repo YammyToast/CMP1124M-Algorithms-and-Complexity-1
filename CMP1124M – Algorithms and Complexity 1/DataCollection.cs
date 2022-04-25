@@ -17,7 +17,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public int sortDirection;
         private SortTypes sortUsed;
 
-        public int steps = 0;
+        public long steps = 0;
 
 
         public DataCollection(string _fileName) {
@@ -106,6 +106,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 case SortTypes.Quick:
                     QuickSort quickSort = new QuickSort(data, sortDirection);
                     sortedList = quickSort.getData();
+                    steps = quickSort.getSteps();
                     break;
                 case SortTypes.Heap:
                     sortedList = HeapSort(data, dataCount, sortDirection);
@@ -125,14 +126,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         }
 
         public (int Number, int[] indexes) Search(SearchTypes search, int searchValue, int direction) {
+
+            steps = 0;
+
             (int Number, int[] indexes) searchResults = (searchValue, new int[1] { -1 });
             switch (search) {
                 case SearchTypes.Binary:
                     searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
                     break;
-                case SearchTypes.Interpolation:
-                    searchResults = InterpolationSort(0, data.Count - 1, searchValue, direction);
+                case SearchTypes.Jump:
+                    searchResults = JumpSearch(searchValue, direction);
                     break;
+                //case SearchTypes.Interpolation:
+                //    searchResults = InterpolationSearch(0, data.Count - 1, searchValue, direction);
+                //    break;
                 default:
                     searchResults = BinarySearch(0, data.Count - 1, searchValue, direction);
                     break;
@@ -178,9 +185,9 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 // Gradually pair together lists from the stack until stack is empty.
 
                 List<int> sortedLeft = MergeSort(leftArray, direction);
-                steps++;
+                
                 List<int> sortedRight = MergeSort(rightArray, direction);
-                steps++;
+                
                 List<int> result = MergeLists(sortedLeft, sortedRight, direction);
                 steps++;
                 return result;
@@ -288,7 +295,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         }
 
         private List<int> InsertionSort(List<int> list, int direction) {
-            for (int index = 0; index < list.Count; index++) { 
+            for (int index = 1; index < list.Count; index++) { 
                 int moveValue = list[index];
                 
                 int searchIndex =  index - 1;
@@ -318,16 +325,19 @@ namespace CMP1124M_Algorithms_and_Complexity_1
         public (int Number, int[] indexes) BinarySearch(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
             
             int midPoint = (lowerBoundary + upperBoundary) / 2;
+            steps++;
             int midPointValue = data.ElementAt(midPoint);
 
             if (searchValue == midPointValue) {
-
+                steps++;
                 return GetSortedRange(searchValue, midPoint);
             }
 
             if (upperBoundary - 1 == lowerBoundary) {
                 int closestLower = Math.Abs((midPointValue * direction) - data.ElementAt(lowerBoundary));
+                steps++;
                 int closestUpper = Math.Abs((midPointValue * direction) - data.ElementAt(upperBoundary));
+                steps++;
                 if (closestLower <= closestUpper)
                 {
                     return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
@@ -339,70 +349,123 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             }
 
             if ((searchValue * direction) > (midPointValue * direction)) {
+                steps++;
                 return BinarySearch(midPoint, upperBoundary, searchValue, direction);
             }
             else {
+                steps++;
                 return BinarySearch(lowerBoundary, midPoint, searchValue, direction);
             }
 
         }
 
-        private (int Number, int[] indexes) InterpolationSort(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
-            
-            if (data.ElementAt(0) > searchValue) return GetSortedRange(data.ElementAt(0), 0);
-            if (data.ElementAt(dataCount - 1) < searchValue) return GetSortedRange(data.ElementAt(dataCount - 1), dataCount - 1);
-
-            int lowerVal = data.ElementAt(lowerBoundary);
-            int upperVal = data.ElementAt(upperBoundary);
-
-            //Console.Write($"search: {searchValue}, lower: {lowerBoundary} => {data.ElementAt(lowerBoundary)}, upper: {upperBoundary} => {data.ElementAt(upperBoundary)} ");
-            if ((searchValue * direction) >= (data.ElementAt(lowerBoundary) * direction) && (searchValue * direction) <= (data.ElementAt(upperBoundary) * direction) && lowerBoundary <= upperBoundary) {
-
-                Console.WriteLine("test");
-                //int interpolationPosition = (lowerBoundary + ((searchValue - data.ElementAt(lowerBoundary)) * (upperBoundary - lowerBoundary))) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary));
-                int interpolationPosition = lowerBoundary + (((upperBoundary - lowerBoundary) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary))) * (searchValue - data.ElementAt(lowerBoundary)));
-                
-                Console.Write($"interpolation: {interpolationPosition}, interpolationVal: {data.ElementAt(interpolationPosition)} \n");
-                if (data.ElementAt(interpolationPosition) == searchValue)
-                {
-                    
-                    return GetSortedRange(searchValue, interpolationPosition);
-                }                
-                else if ((data.ElementAt(interpolationPosition) * direction) > (searchValue * direction))
-                {
-                    return InterpolationSort(lowerBoundary, interpolationPosition - 1, searchValue, direction);
-                }
-                else {
-                    return InterpolationSort(interpolationPosition + 1, upperBoundary, searchValue, direction);
-                }
-            }
-
-            //Console.WriteLine($"Search value doesn't exist in data set");
+        private (int Number, int[] indexes) JumpSearch(int searchValue, int direction) {
+            int searchingIndex = (searchValue < data.ElementAt(dataCount / 2)) ? 0 : dataCount / 2;
+            int stepInterval = (int)Math.Sqrt(dataCount);
+            steps++;
             try
             {
-
-                if ((searchValue * direction) >= (data.ElementAt(lowerBoundary - 1) * direction) && (searchValue * direction) <= (data.ElementAt(lowerBoundary) * direction))
+                while (searchingIndex <= dataCount - stepInterval && data.ElementAt(searchingIndex + stepInterval) < searchValue)
                 {
-
-                    int closestLower = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary - 1));
-                    int closestUpper = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary));
-                    if (closestLower <= closestUpper)
-                    {
-                        return GetSortedRange(data.ElementAt(lowerBoundary - 1), lowerBoundary - 1);
-                    }
-                    else
-                    {
-                        return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
-                    }
-
+                    searchingIndex += stepInterval;
+                    steps++;
                 }
+
             }
             catch (Exception ex) { 
                 
             }
-            // Something is wrong if it gets to here.
-            return (searchValue, new int[0]);
+            while (searchingIndex <= dataCount && data.ElementAt(searchingIndex) < searchValue)
+            {
+                searchingIndex++;
+                steps++;
+            }
+            if (data.ElementAt(searchingIndex) == searchValue)
+            {
+                return GetSortedRange(searchValue, searchingIndex);
+            }
+            else {
+                int closestLower = Math.Abs((searchValue * direction) - data.ElementAt(searchingIndex - 1));
+                steps++;
+                int closestUpper = Math.Abs((searchValue * direction) - data.ElementAt(searchingIndex));
+                steps++;
+                if (closestLower <= closestUpper)
+                {
+                    return GetSortedRange(data.ElementAt(searchingIndex - 1), searchingIndex - 1);
+                }
+                else
+                {
+                    return GetSortedRange(data.ElementAt(searchingIndex), searchingIndex);
+                }
+            }
+            
         }
+
+        //private (int Number, int[] indexes) InterpolationSearch(int lowerBoundary, int upperBoundary, int searchValue, int direction) {
+            
+        //    if (data.ElementAt(0) > searchValue) return GetSortedRange(data.ElementAt(0), 0);
+        //    if (data.ElementAt(dataCount - 1) < searchValue) return GetSortedRange(data.ElementAt(dataCount - 1), dataCount - 1);
+        //    if (lowerBoundary == upperBoundary) return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
+
+        //    int lowerVal = data.ElementAt(lowerBoundary);
+        //    int upperVal = data.ElementAt(upperBoundary);
+
+        //    try
+        //    {
+        //        //Console.Write($"search: {searchValue}, lower: {lowerBoundary} => {data.ElementAt(lowerBoundary)}, upper: {upperBoundary} => {data.ElementAt(upperBoundary)} ");
+        //        if ((searchValue * direction) >= (data.ElementAt(lowerBoundary) * direction) && (searchValue * direction) <= (data.ElementAt(upperBoundary) * direction) && lowerBoundary <= upperBoundary)
+        //        {
+
+
+        //            //int interpolationPosition = (lowerBoundary + ((searchValue - data.ElementAt(lowerBoundary)) * (upperBoundary - lowerBoundary))) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary));
+        //            int interpolationPosition = lowerBoundary + (((upperBoundary - lowerBoundary) / (data.ElementAt(upperBoundary) - data.ElementAt(lowerBoundary))) * (searchValue - data.ElementAt(lowerBoundary)));
+
+        //            //Console.Write($"interpolation: {interpolationPosition}, interpolationVal: {data.ElementAt(interpolationPosition)} \n");
+        //            if (data.ElementAt(interpolationPosition) == searchValue)
+        //            {
+
+        //                return GetSortedRange(searchValue, interpolationPosition);
+        //            }
+        //            else if ((data.ElementAt(interpolationPosition) * direction) > (searchValue * direction))
+        //            {
+        //                return InterpolationSearch(lowerBoundary, interpolationPosition - 1, searchValue, direction);
+        //            }
+        //            else
+        //            {
+        //                return InterpolationSearch(interpolationPosition + 1, upperBoundary, searchValue, direction);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex) { 
+            
+        //    }
+
+        //    //Console.WriteLine($"Search value doesn't exist in data set");
+        //    try
+        //    {
+
+        //        if ((searchValue * direction) >= (data.ElementAt(lowerBoundary - 1) * direction) && (searchValue * direction) <= (data.ElementAt(lowerBoundary) * direction))
+        //        {
+
+        //            int closestLower = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary - 1));
+        //            int closestUpper = Math.Abs((searchValue * direction) - data.ElementAt(lowerBoundary));
+        //            if (closestLower <= closestUpper)
+        //            {
+        //                return GetSortedRange(data.ElementAt(lowerBoundary - 1), lowerBoundary - 1);
+        //            }
+        //            else
+        //            {
+        //                return GetSortedRange(data.ElementAt(lowerBoundary), lowerBoundary);
+        //            }
+
+        //        }
+        //    }
+        //    catch (Exception ex) { 
+                
+        //    }
+        //    // Something is wrong if it gets to here.
+        //    return (searchValue, new int[0]);
+        //}
 
 
         /// <summary>
@@ -464,6 +527,7 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
     public enum SearchTypes { 
         Binary = 1,
-        Interpolation
+        Interpolation,
+        Jump
     }
 }

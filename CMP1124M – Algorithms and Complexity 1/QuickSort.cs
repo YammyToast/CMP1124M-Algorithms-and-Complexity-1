@@ -9,10 +9,12 @@ namespace CMP1124M_Algorithms_and_Complexity_1
     internal class QuickSort
     {
         private static List<int> data;
+        private static long steps;
 
         public QuickSort(List<int> data_, int sortDirection)
         {
             data = data_;
+            steps = 0;
             Sort(0, data.Count - 1, sortDirection);
         }
 
@@ -21,15 +23,22 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return data;
         }
 
+        public long getSteps() {
+            return steps;
+        }
+
         private static void Sort(int lowerBoundary, int upperBoundary, int direction)
         {
-
+            
             if (lowerBoundary < upperBoundary)
             {
                 int partitionIndex = Partition(lowerBoundary, upperBoundary, direction);
                 Sort(lowerBoundary, partitionIndex - 1, direction);
+                steps++;
                 Sort(partitionIndex + 1, upperBoundary, direction);
+                steps++;
             }
+
         }
 
         private static int Partition(int lowerBoundary, int upperBoundary, int direction)
@@ -45,14 +54,17 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
                     int temp = data[lowerIndex];
                     data[lowerIndex] = data[j];
+                    steps++;
                     data[j] = temp;
+                    steps++;
                 }
             }
 
             int temp1 = data[lowerIndex + 1];
             data[lowerIndex + 1] = data[upperBoundary];
+            steps++;
             data[upperBoundary] = temp1;
-
+            steps++;
             return lowerIndex + 1;
         }
 
