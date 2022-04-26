@@ -8,9 +8,11 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 {
     internal class QuickSort
     {
+        // Data is saved statically to allow search to function.
         private static List<int> data;
         private static long steps;
 
+        // Quick sort constructor.
         public QuickSort(List<int> data_, int sortDirection)
         {
             data = data_;
@@ -27,12 +29,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             return steps;
         }
 
+        /// <summary>
+        /// Header function for the quicksort algorithm.
+        /// </summary>
+        /// <param name="lowerBoundary">Lower boundary of the partition.</param>
+        /// <param name="upperBoundary">Upper boundary of the partition.</param>
+        /// <param name="direction">Direction to sort in. 1: Ascending, -1: Descending.</param>
         private static void Sort(int lowerBoundary, int upperBoundary, int direction)
         {
-            
+            // While the boundaries haven't crossed:
             if (lowerBoundary < upperBoundary)
             {
+                // Create a partition to determine the split index.
                 int partitionIndex = Partition(lowerBoundary, upperBoundary, direction);
+                // Create partitions either side of the split index.
                 Sort(lowerBoundary, partitionIndex - 1, direction);
                 steps++;
                 Sort(partitionIndex + 1, upperBoundary, direction);
@@ -43,16 +53,20 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
         private static int Partition(int lowerBoundary, int upperBoundary, int direction)
         {
+            // Set the pivot value as the last value in the partition.
             int pivotVal = data[upperBoundary];
             int lowerIndex = (lowerBoundary - 1);
+            int temp;
 
+            // Iterate through the partition.
             for (int j = lowerBoundary; j < upperBoundary; j++)
             {
+                // Switch values that are lower than the pivot value.
                 if ((data[j] * direction) <= (pivotVal * direction))
                 {
                     lowerIndex++;
 
-                    int temp = data[lowerIndex];
+                    temp = data[lowerIndex];
                     data[lowerIndex] = data[j];
                     steps++;
                     data[j] = temp;
@@ -60,56 +74,13 @@ namespace CMP1124M_Algorithms_and_Complexity_1
                 }
             }
 
-            int temp1 = data[lowerIndex + 1];
+            temp = data[lowerIndex + 1];
             data[lowerIndex + 1] = data[upperBoundary];
             steps++;
-            data[upperBoundary] = temp1;
+            data[upperBoundary] = temp;
             steps++;
             return lowerIndex + 1;
         }
 
-
-        //    public static void Sort(List<int> list, int lowerBoundary, int upperBoundary, int direction)
-        //    {
-        //        if (lowerBoundary < upperBoundary) { 
-        //            int partition = QSPartition(list, lowerBoundary, upperBoundary, direction);
-        //            Sort(list, lowerBoundary, partition - 1, direction);
-        //            Sort(list, partition + 1, upperBoundary, direction);
-
-
-        //        }
-
-        //    }
-
-        //    private static int QSPartition(List<int> partition, int lowerBoundary, int upperBoundary, int direction)
-        //    {
-        //        Console.WriteLine($"L: {lowerBoundary}, U: {upperBoundary}");
-        //        //foreach (int item in partition) {
-        //        //    Console.Write($" {item}");
-        //        //}
-        //        Console.WriteLine();
-        //        int temp;
-        //        int pivot = partition.ElementAt(lowerBoundary);
-        //        int pivotIndex = lowerBoundary;
-        //        for (int scanIndex = lowerBoundary + 1; scanIndex < upperBoundary; scanIndex++)
-        //        {
-
-        //            if ((partition.ElementAt(scanIndex) * direction) < (pivot * direction))
-        //            {
-        //                temp = partition.ElementAt(lowerBoundary);
-        //                partition[lowerBoundary] = partition[scanIndex];
-        //                partition[scanIndex] = temp;
-
-        //                lowerBoundary++;
-        //            }
-        //        }
-        //        temp = partition.ElementAt(lowerBoundary);
-        //        partition[lowerBoundary] = partition.ElementAt(pivotIndex);
-        //        partition[pivotIndex] = temp;
-
-        //        return lowerBoundary;
-
-        //    }
-        //}
     }
 }
