@@ -41,29 +41,37 @@ namespace CMP1124M_Algorithms_and_Complexity_1
             string bars = new string('─', longestLengths[0]);
             string spaces = new string(' ', longestLengths[1]);
 
-            // Writes the actual table.
-            // Writes the header.
+            // 
+            // ============= Header =============
             Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Stats {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
+            // ============= Values =============
             // Iterates over the predetermined rows of the table.
             // ! Spaces the second value using the established spaces to make sure they are all lined up. 
             for (int i = 0; i < lines.GetLength(0); i++) {
                 Console.WriteLine($"│ {lines[i, 0]} : {lines[i, 1]}{spaces[..(longestLengths[1] - lines[i, 1].Length)]} │");
             }
+            // ============= Footer =============
             // Writes the footer of the table.
             // This could be changed as it is part static, and part dynamic.
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
         }
 
-
+        /// <summary>
+        /// Writes the search results into the console in a table format.
+        /// </summary>
+        /// <param name="searchResults">A tuple containing the value searched for, and the indexes at which it occured.</param>
+        /// <param name="ticksTaken">The time-span over which the sort was performed.</param>
+        /// <param name="stepsTaken">The number of steps needed in the search.</param>
         public void WriteSearchResults((int Number, int[] indexes) searchResults, TimeSpan ticksTaken, long stepsTaken) {
 
+            // Holds the rows of the table to be iterated over.
             string[,] lines = new string[4, 2]{
                 { $"Search Number" , $"{searchResults.Number}" },
                 { $"Time Taken   " , $"{ticksTaken.TotalMilliseconds}ms" },
                 { $"Steps Taken  " , $"{stepsTaken}"},
                 { $"Occurs At    " , $""}
             };
-
+            // Same procedure as the WriteSortResults algorithm.
             int longestLength = (searchResults.Number.ToString().Length > ticksTaken.TotalMilliseconds.ToString().Length + 2) ? searchResults.Number.ToString().Length : ticksTaken.TotalMilliseconds.ToString().Length + 2;
             foreach (int index in searchResults.indexes) {
                 if (index.ToString().Length > longestLength) { 
@@ -74,33 +82,41 @@ namespace CMP1124M_Algorithms_and_Complexity_1
 
             string spaces = new string(' ', longestLength);
             string bars = new string('─', 6 + longestLength);
-
+            // ============= Header =============
             Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Value Search {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
+            // ============= Static Rows =============
             for (int i = 0; i < lines.GetLength(0); i++) {
 
                 Console.WriteLine($"│ {lines[i, 0]} : {lines[i, 1]}{spaces[..(longestLength - lines[i, 1].ToString().Length)]} │");
             }
+            // ============= Indexes =============
             foreach (int index in searchResults.indexes) {
                 Console.WriteLine($"│                 {index}{spaces[..(spaces.Length - index.ToString().Length)]} │");
             }
-
+            // ============= Footer =============
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}──────────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
         }
+        /// <summary>
+        /// Writes the intervals in a table format.
+        /// </summary>
+        /// <param name="intervals">List of the intervals found.</param>
         public void WriteIntervals(List<int> intervals) {
-            // yeah
+
+            // Same procedure as the WriteSortResults algorithm.
             int[] longestLengths = { intervals.Count().ToString().Length , (intervals.First() > intervals.Last()) ? intervals.First().ToString().Length : intervals.Last().ToString().Length };
             string bars = new string('─', longestLengths[0] + longestLengths[1]);
             string spaces = new string(' ', (longestLengths[0] > longestLengths[1]) ? longestLengths[0]:longestLengths[1]);
             int index = 1;
 
+            // ============= Header =============
             Console.WriteLine($"┌{bars[..(bars.Length / 2 - 1)]} Intervals {bars[..(bars.Length - (bars.Length / 2) - 1)]}┐");
-            
 
+            // ============= Values =============
             foreach (int interval in intervals) {
                 Console.WriteLine($"│ {spaces[..(longestLengths[0] - index.ToString().Length)]}{index}   :   {interval}{spaces[..(longestLengths[1] - interval.ToString().Length)]} │");
                 index++;
             }
-
+            // ============= Footer =============
             Console.WriteLine($"└{bars[..(bars.Length / 2 - 1)]}───────────{bars[..(bars.Length - (bars.Length / 2) - 1)]}┘");
 
         }
